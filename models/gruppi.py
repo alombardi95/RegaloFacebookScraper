@@ -1,4 +1,5 @@
 from database.db_connection import Database
+from models.db_items import GruppoItem
 
 
 class Gruppi(Database):
@@ -16,7 +17,7 @@ class Gruppi(Database):
             paese TEXT,
             regione TEXT,
             provincia TEXT,
-            città TEXT,
+            citta TEXT,
             FOREIGN KEY(id_progetto) REFERENCES Progetto(id)
         )
         ''')
@@ -40,3 +41,6 @@ class Gruppi(Database):
     def delete_gruppo(self, id_gruppo):
         self.execute_query('DELETE FROM Gruppi WHERE id = ?', (id_gruppo,))
         self.conn.commit()
+
+if __name__ == '__main__':
+    Gruppi()

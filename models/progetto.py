@@ -1,4 +1,5 @@
 from database.db_connection import Database
+from models.db_items import ProgettoItem
 
 
 class Progetto(Database):
@@ -19,13 +20,19 @@ class Progetto(Database):
         self.execute_query('INSERT INTO Progetto (nome) VALUES (?)', (nome,))
         self.conn.commit()
 
-    def get_progetto(self, id_progetto):
-        return self.execute_query('SELECT * FROM Progetto WHERE id = ?', (id_progetto,)).fetchone()
+    def get_progetto(self, id_progetto) -> ProgettoItem:
+        result = self.execute_query('SELECT * FROM Progetto WHERE id = ?', (id_progetto,)).fetchone()
+        return ProgettoItem(**result)
 
-    def update_progetto(self, id_progetto, nome):
+    def get_progetti(self) -> list[ProgettoItem]:
+        results = self.execute_query('SELECT * FROM Progetto').fetchall()
+        progetti = [ProgettoItem(**dict(result)) for result in results]
+        return progetti
+
+    def update_progetto(self, id_progetto: int, nome: str):
         self.execute_query('UPDATE Progetto SET nome = ? WHERE id = ?', (nome, id_progetto))
         self.conn.commit()
 
-    def delete_progetto(self, id_progetto):
+    def delete_progetto(self, id_progetto: int):
         self.execute_query('DELETE FROM Progetto WHERE id = ?', (id_progetto,))
         self.conn.commit()
