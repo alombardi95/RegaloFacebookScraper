@@ -1,30 +1,32 @@
 from datetime import datetime
-from dataclasses import dataclass
+
+from database.create_app import db
 
 
-@dataclass
-class ProgettoItem:
-    id: int
-    nome: str
+class GruppoItem(db.Model):
+    __tablename__ = 'gruppi'
+
+    link = db.Column(db.String(200), primary_key=True)
+    nome = db.Column(db.String(100))
+    paese = db.Column(db.String(100))
+    regione = db.Column(db.String(100))
+    provincia = db.Column(db.String(100))
+    citta = db.Column(db.String(100))
+    dettagli = db.relationship('DettagliGruppoItem', backref='gruppi')
+
+    def __repr__(self):
+        return f"<GruppoItem(id={self.link}, nome={self.nome})>"
 
 
-@dataclass
-class GruppoItem:
-    id: int
-    id_progetto: int
-    nome: str
-    link: str
-    paese: str
-    regione: str
-    provincia: str
-    citta: str
+class DettagliGruppoItem(db.Model):
+    __tablename__ = 'dettagli_gruppo'
 
+    id = db.Column(db.Integer, primary_key=True)
+    id_gruppo = db.Column(db.String(200), db.ForeignKey('gruppi.link'))
+    data_aggiornamento = db.Column(db.DateTime, default=datetime.utcnow)
+    numero_membri = db.Column(db.Integer)
+    numero_admin = db.Column(db.Integer)
+    nuovi_posts = db.Column(db.Integer)
 
-@dataclass
-class DettagliGruppoItem:
-    id: int
-    id_gruppo: int
-    data_aggiornamento: datetime
-    numero_membri: int
-    numero_admin: int
-    nuovi_posts: int
+    def __repr__(self):
+        return f"<DettagliGruppoItem(id={self.id}, id_gruppo={self.id_gruppo})>"
