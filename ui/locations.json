@@ -1,0 +1,192 @@
+{
+    "Italia": {
+        "Abruzzo": {
+            "L'Aquila": {},
+            "Teramo": {},
+            "Pescara": {},
+            "Chieti": {}
+        },
+        "Basilicata": {
+            "Potenza": {},
+            "Matera": {}
+        },
+        "Calabria": {
+            "Catanzaro": {},
+            "Cosenza": {},
+            "Crotone": {},
+            "Reggio Calabria": {},
+            "Vibo Valentia": {}
+        },
+        "Campania": {
+            "Avellino": {},
+            "Benevento": {},
+            "Caserta": {},
+            "Napoli": {},
+            "Salerno": {}
+        },
+        "Emilia-Romagna": {
+            "Bologna": {},
+            "Ferrara": {},
+            "Forlì-Cesena": {},
+            "Modena": {},
+            "Parma": {},
+            "Piacenza": {},
+            "Ravenna": {},
+            "Reggio Emilia": {},
+            "Rimini": {}
+        },
+        "Friuli Venezia Giulia": {
+            "Trieste": {},
+            "Gorizia": {},
+            "Pordenone": {},
+            "Udine": {}
+        },
+        "Lazio": {
+            "Roma": {},
+            "Latina": {},
+            "Frosinone": {},
+            "Viterbo": {},
+            "Rieti": {}
+        },
+        "Liguria": {
+            "Genova": {},
+            "Imperia": {},
+            "Savona": {},
+            "La Spezia": {}
+        },
+        "Lombardia": {
+            "Milano": {},
+            "Bergamo": {},
+            "Brescia": {},
+            "Como": {},
+            "Cremona": {},
+            "Lecco": {},
+            "Lodi": {},
+            "Mantova": {},
+            "Monza e della Brianza": {},
+            "Pavia": {},
+            "Sondrio": {},
+            "Varese": {}
+        },
+        "Marche": {
+            "Ancona": {},
+            "Ascoli Piceno": {},
+            "Fermo": {},
+            "Macerata": {},
+            "Pesaro e Urbino": {}
+        },
+        "Molise": {
+            "Campobasso": {},
+            "Isernia": {}
+        },
+        "Piemonte": {
+            "Alessandria": {},
+            "Asti": {},
+            "Biella": {},
+            "Cuneo": {},
+            "Novara": {},
+            "Torino": {},
+            "Verbano-Cusio-Ossola": {},
+            "Vercelli": {}
+        },
+        "Puglia": {
+            "Bari": {},
+            "Barletta-Andria-Trani": {},
+            "Brindisi": {},
+            "Foggia": {},
+            "Lecce": {},
+            "Taranto": {}
+        },
+        "Sardegna": {
+            "Cagliari": {},
+            "Nuoro": {},
+            "Oristano": {},
+            "Sassari": {},
+            "Sud Sardegna": {}
+        },
+        "Sicilia": {
+            "Agrigento": {},
+            "Caltanissetta": {},
+            "Catania": {},
+            "Enna": {},
+            "Messina": {},
+            "Palermo": {},
+            "Ragusa": {},
+            "Siracusa": {},
+            "Trapani": {}
+        },
+        "Toscana": {
+            "Arezzo": {},
+            "Firenze": {},
+            "Grosseto": {},
+            "Livorno": {},
+            "Lucca": {},
+            "Massa-Carrara": {},
+            "Pisa": {},
+            "Pistoia": {},
+            "Prato": {},
+            "Siena": {}
+        },
+        "Trentino-Alto Adige": {
+            "Bolzano": {},
+            "Trento": {}
+        },
+        "Umbria": {
+            "Perugia": [
+                "Perugia",
+                "Assisi",
+                "Città di Castello",
+                "Foligno",
+                "Gubbio",
+                "Spoleto",
+                "Spello",
+                "Umbertide",
+                "Marsciano"
+            ],
+            "Terni": [
+                "Terni",
+                "Orvieto",
+                "Narni",
+                "Amelia"
+            ]
+        },
+        "Valle d'Aosta": {
+            "Aosta": [
+                "Aosta"
+            ],
+            "Courmayeur": [
+                "Courmayeur"
+            ],
+            "Cervinia": [
+                "Breuil-Cervinia"
+            ],
+            "Saint-Vincent": [
+                "Saint-Vincent"
+            ],
+            "La Thuile": [
+                "La Thuile"
+            ],
+            "Cogne": [
+                "Cogne"
+            ]
+        },
+        "Veneto": {
+            "Venezia": [
+                "Venezia",
+                "Chioggia",
+                "San Donà di Piave",
+                "Mestre",
+                "Mirano",
+                "Jesolo",
+                "Portogruaro",
+                "Cavallino-Treporti"
+            ],
+            "Verona": {},
+            "Vicenza": {},
+            "Padova": {},
+            "Treviso": {},
+            "Belluno": {},
+            "Rovigo": {}
+        }
+    }
+}
