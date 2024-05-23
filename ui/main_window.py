@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QMenuBar,
                              QVBoxLayout, QWidget, QListWidget, QPushButton,
                              QStackedWidget, QLabel, QHBoxLayout, QSizePolicy)
 from project_manager import ProjectManager
+from gruppi_manager import GruppiManager
+from database.create_app import db, app
 
 
 class MainWindow(QMainWindow):
@@ -20,14 +22,15 @@ class MainWindow(QMainWindow):
 
         # Barra laterale
         self.sidebar = QListWidget()
-        self.sidebar.addItems(["Progetti", "Gruppi"])
+        #self.sidebar.addItems(["Progetti", "Gruppi"])
+        self.sidebar.addItems(["Gruppi"])
         self.sidebar.currentItemChanged.connect(self.display_page)
         self.mainLayout.addWidget(self.sidebar)
 
         # Area di visualizzazione principale
         self.stack = QStackedWidget(self)
-        self.stack.addWidget(ProjectManager())
-        self.stack.addWidget(self.create_page("Gruppi"))
+        #self.stack.addWidget(ProjectManager())
+        self.stack.addWidget(GruppiManager())
         self.mainLayout.addWidget(self.stack, 4)
 
         self.sidebar.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
@@ -51,7 +54,7 @@ class MainWindow(QMainWindow):
 
         # Barra degli strumenti
         self.toolbar = self.addToolBar("Toolbar")
-        self.toolbar.addAction("Aggiungi Progetto")
+        #self.toolbar.addAction("Aggiungi Progetto")
         self.toolbar.addAction("Aggiungi Gruppo")
         self.toolbar.addAction("Esporta Report")
         self.toolbar.addAction("Avvia Procedura")
@@ -70,10 +73,12 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    app = QApplication(sys.argv)
+    with app.app_context():
+        db.create_all()
+    app_ = QApplication(sys.argv)
     win = MainWindow()
     win.show()
-    sys.exit(app.exec_())
+    sys.exit(app_.exec_())
 
 
 if __name__ == '__main__':
