@@ -1,15 +1,31 @@
 import sys
 from typing import Optional
 
-from PyQt5.QtCore import Qt, QRegExp
+from PyQt5.QtCore import Qt, QRegExp, QSortFilterProxyModel
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 from database.create_app import db, app
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                              QPushButton, QTableWidget, QTableWidgetItem, QDialogButtonBox, QLineEdit, QLabel,
-                             QGridLayout, QDialog, QMessageBox)
+                             QGridLayout, QDialog, QMessageBox, QTableView, QAbstractItemView)
 from models.db_items import GruppoItem
 from ui.LocationSelector import LocationSelector
+
+
+class TableModel(QSortFilterProxyModel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.filter_column = 0
+
+    def setFilterColumn(self, column):
+        self.filter_column = column
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        if not self.filterRegExp().isEmpty():
+            index = self.sourceModel().index(source_row, self.filter_column, source_parent)
+            return self.filterRegExp().indexIn(self.sourceModel().data(index)) >= 0
+        return True
 
 
 class AddModifyGruppoDialog(QDialog):
@@ -82,23 +98,27 @@ class GruppiManager(QWidget):
         layout = QVBoxLayout()
 
         self.filter_edit = QLineEdit()
-        self.filter_edit.setPlaceholderText("Filter text...")
+        self.filter_edit.setPlaceholderText("Filtro link...")
         self.filter_edit.textChanged.connect(self.filter_text_changed)
         layout.addWidget(self.filter_edit)
 
         # Tabella per la visualizzazione dei progetti
-        self.table = QTableWidget()
-        table_headers = ["Link", "Nome", "Paese", "Regione", "Provincia", "Citta"]
-        self.table.setColumnCount(len(table_headers))  # ad esempio, ID e Nome del Progetto
-        self.table.setHorizontalHeaderLabels(table_headers)
+        self.table = QTableView()
+        layout.addWidget(self.table)
 
-        # Configura la tabella per selezionare tutta la riga
-        self.table.setSelectionBehavior(QTableWidget.SelectRows)
-        self.table.setSelectionMode(QTableWidget.SingleSelection)
+        table_headers = ["Link", "Nome", "Paese", "Regione", "Provincia", "Citta"]
+        self.group_table_model = QStandardItemModel(0, len(table_headers))
+        self.group_table_model.setHorizontalHeaderLabels(table_headers)
 
         self.populate_table()  # Funzione per popolare la tabella
-        self.table.resizeColumnsToContents()
-        layout.addWidget(self.table)
+
+        self.proxy_model = TableModel()
+        self.proxy_model.setSourceModel(self.group_table_model)
+        self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+
+        self.table.setModel(self.proxy_model)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+
 
         # Bottoni per le operazioni CRUD
         btn_layout = QHBoxLayout()
@@ -116,27 +136,23 @@ class GruppiManager(QWidget):
 
         self.setLayout(layout)
 
-    def add_non_editable_item(self, row, column, item):
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)  # Rende la cella non modificabile
-        self.table.setItem(row, column, item)
-
     def filter_text_changed(self, text):
         regex = QRegExp(text, Qt.CaseInsensitive, QRegExp.RegExp)
         self.proxy_model.setFilterRegExp(regex)
 
     def populate_table(self):
         # Qui dovresti caricare i dati dei progetti. Questo è solo un esempio.
-        self.table.clearContents()
+        self.group_table_model.removeRows(0, self.group_table_model.rowCount())
         with app.app_context():
-            groups: list[GruppoItem] = GruppoItem.query.all() # [(1, "Gruppo 1"), (2, "Gruppo 2"), (3, "Gruppo 3")]
-        self.table.setRowCount(len(groups))
+            groups: list[GruppoItem] = GruppoItem.query.all()
+
         for i, group in enumerate(groups):
-            self.add_non_editable_item(i, 0, QTableWidgetItem(group.link))
-            self.add_non_editable_item(i, 1, QTableWidgetItem(group.nome))
-            self.add_non_editable_item(i, 2, QTableWidgetItem(group.paese))
-            self.add_non_editable_item(i, 3, QTableWidgetItem(group.regione))
-            self.add_non_editable_item(i, 4, QTableWidgetItem(group.provincia))
-            self.add_non_editable_item(i, 5, QTableWidgetItem(group.citta))
+            self.group_table_model.setItem(i, 0, QStandardItem(group.link))
+            self.group_table_model.setItem(i, 1, QStandardItem(group.nome))
+            self.group_table_model.setItem(i, 2, QStandardItem(group.paese))
+            self.group_table_model.setItem(i, 3, QStandardItem(group.regione))
+            self.group_table_model.setItem(i, 4, QStandardItem(group.provincia))
+            self.group_table_model.setItem(i, 5, QStandardItem(group.citta))
 
     def add_group(self):
         dialog = AddModifyGruppoDialog()
@@ -157,15 +173,26 @@ class GruppiManager(QWidget):
             else:
                 QMessageBox.warning(self, "Errore", "Il link non può essere vuoto.", QMessageBox.Ok)
 
-    def edit_project(self):
-        selected_row = self.table.currentRow()
+    def get_selected_row(self):
+        indexes = self.table.selectionModel().selectedIndexes()
+        if indexes:
+            proxy_index = indexes[0]
+            source_index = self.proxy_model.mapToSource(proxy_index)
+            selected_row = source_index.row()
+            row_data = [self.group_table_model.item(selected_row, col).text()
+                        for col in range(self.group_table_model.columnCount())]
+            return row_data
+        else:
+            QMessageBox.warning(self, "No Selection", "No row selected")
 
-        if selected_row == -1:
-            QMessageBox.warning(self, "Nessuna selezione", "Seleziona un record da modificare.")
+    def edit_project(self):
+        selected_row = self.get_selected_row()
+
+        if not selected_row:
             return
 
         # Recuperare l'ID del record dalla prima colonna
-        record_id = self.table.item(selected_row, 0).text()
+        record_id = selected_row[0]
 
         with app.app_context():
             record = GruppoItem.query.get(record_id)
@@ -186,14 +213,14 @@ class GruppiManager(QWidget):
                 QMessageBox.warning(self, "Errore", "I campo non può essere vuoto", QMessageBox.Ok)
 
     def delete_project(self):
-        selected_row = self.table.currentRow()
+        selected_row = self.get_selected_row()
 
-        if selected_row == -1:
-            QMessageBox.warning(self, "Nessuna selezione", "Seleziona un record da eliminare.")
+        if not selected_row:
+            #QMessageBox.warning(self, "Nessuna selezione", "Seleziona un record da eliminare.")
             return
 
         # Recuperare l'ID del record dalla prima colonna
-        record_id = self.table.item(selected_row, 0).text()
+        record_id = selected_row[0]
 
         # Confermare l'eliminazione
         confirm = QMessageBox.question(self, "Conferma Eliminazione",
