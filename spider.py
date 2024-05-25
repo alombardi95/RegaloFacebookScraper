@@ -1,9 +1,9 @@
 from datetime import datetime
 import time
 
-from database.create_app import app, db
+from app import app, db
 from infrastructure.facebook.facebook_driver import FacebookDriver
-from models.db_items import DettagliGruppoItem
+from models.db_items import DettagliGruppoItem, GruppoItem
 from utils.helpers import extract_dates, extract_number
 
 
@@ -52,8 +52,16 @@ def scrape_groups(links: list[str]):
 
     with app.app_context():
         for link in links:
+            gruppo_query = GruppoItem.query.filter_by(link=link)
+            gruppo: GruppoItem = gruppo_query.first()
+
             result = scrape_data(fs, link)
             result['id_gruppo'] = link
+
+            if gruppo and not gruppo.data_creazione:
+                gruppo_query.update({'data_creazione': result['data_creazione']})
+
+            del result['data_creazione']
             record = DettagliGruppoItem(**result)
             db.session.add(record)
             db.session.commit()

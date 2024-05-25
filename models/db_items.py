@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from database.create_app import db
+from app import db
 
 
 class GruppoItem(db.Model):
@@ -12,6 +12,7 @@ class GruppoItem(db.Model):
     regione = db.Column(db.String(100))
     provincia = db.Column(db.String(100))
     citta = db.Column(db.String(100))
+    data_creazione = db.Column(db.DateTime)
     dettagli = db.relationship('DettagliGruppoItem', backref='gruppi')
 
     def __repr__(self):
@@ -27,7 +28,6 @@ class DettagliGruppoItem(db.Model):
     numero_membri = db.Column(db.Integer)
     numero_admin = db.Column(db.Integer)
     nuovi_posts = db.Column(db.Integer)
-    data_creazione = db.Column(db.DateTime)
     ultima_modifica = db.Column(db.DateTime)
 
     def __repr__(self):

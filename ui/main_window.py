@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QWidget, QListWidget, QStackedWidget, QHBoxLayout,
                              QSizePolicy)
 
-from database.create_app import db, app
+from app import db, app
 from gruppi_manager import GruppiManager
 from models.db_items import GruppoItem
 from spider import scrape_groups
@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         self.create_actions()
 
         # Configurazioni iniziali della finestra principale
-        self.setWindowTitle('Gestione Progetti e Gruppi')
+        self.setWindowTitle('Facebook Scraper')
         self.setGeometry(100, 100, 800, 600)
 
         # Layout principale
@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
         # Menu principale
         self.menu_bar = self.menuBar()
         self.file_menu = self.menu_bar.addMenu("File")
-        self.export_menu = self.menu_bar.addMenu("Esporta")
+        #self.export_menu = self.menu_bar.addMenu("Esporta")
         self.help_menu = self.menu_bar.addMenu("Aiuto")
 
         # Azioni del menu
@@ -50,8 +50,8 @@ class MainWindow(QMainWindow):
         exit_action.triggered.connect(self.close)
         self.file_menu.addAction(exit_action)
 
-        export_action = QAction("Esporta Report in Excel", self)
-        self.export_menu.addAction(export_action)
+        #export_action = QAction("Esporta Report in Excel", self)
+        #self.export_menu.addAction(export_action)
 
         help_action = QAction("Aiuto", self)
         self.help_menu.addAction(help_action)
@@ -59,8 +59,8 @@ class MainWindow(QMainWindow):
         # Barra degli strumenti
         self.toolbar = self.addToolBar("Toolbar")
         #self.toolbar.addAction("Aggiungi Progetto")
-        self.toolbar.addAction("Aggiungi Gruppo")
-        self.toolbar.addAction("Esporta Report")
+        #self.toolbar.addAction("Aggiungi Gruppo")
+        #self.toolbar.addAction("Esporta Report")
         self.toolbar.addAction(self.run_bot_action)
 
     def create_actions(self):

@@ -4,11 +4,11 @@ from typing import Optional
 from PyQt5.QtCore import Qt, QRegExp, QSortFilterProxyModel
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
-from database.create_app import db, app
+from app import db, app
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
-                             QPushButton, QTableWidget, QTableWidgetItem, QDialogButtonBox, QLineEdit, QLabel,
-                             QGridLayout, QDialog, QMessageBox, QTableView, QAbstractItemView)
+                             QPushButton, QDialogButtonBox, QLineEdit, QLabel,
+                             QDialog, QMessageBox, QTableView, QAbstractItemView)
 from models.db_items import GruppoItem
 from ui.LocationSelector import LocationSelector
 
