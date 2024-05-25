@@ -1,15 +1,19 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QMenuBar,
-                             QVBoxLayout, QWidget, QListWidget, QPushButton,
-                             QStackedWidget, QLabel, QHBoxLayout, QSizePolicy)
-from project_manager import ProjectManager
-from gruppi_manager import GruppiManager
+
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QWidget, QListWidget, QStackedWidget, QHBoxLayout,
+                             QSizePolicy)
+
 from database.create_app import db, app
+from gruppi_manager import GruppiManager
+from models.db_items import GruppoItem
+from spider import scrape_groups
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.create_actions()
 
         # Configurazioni iniziali della finestra principale
         self.setWindowTitle('Gestione Progetti e Gruppi')
@@ -57,15 +61,19 @@ class MainWindow(QMainWindow):
         #self.toolbar.addAction("Aggiungi Progetto")
         self.toolbar.addAction("Aggiungi Gruppo")
         self.toolbar.addAction("Esporta Report")
-        self.toolbar.addAction("Avvia Procedura")
+        self.toolbar.addAction(self.run_bot_action)
 
-    def create_page(self, text):
-        page = QWidget()
-        layout = QVBoxLayout()
-        label = QLabel(f"Contenuto per {text}", page)
-        layout.addWidget(label)
-        page.setLayout(layout)
-        return page
+    def create_actions(self):
+        # azione per avviare il bot
+        self.run_bot_action = QAction("Run", self)
+        self.run_bot_action.triggered.connect(self.run_bot)
+
+    @staticmethod
+    def run_bot():
+        with app.app_context():
+            groups = GruppoItem.query.all()
+        links = [group.link for group in groups]
+        scrape_groups(links)
 
     def display_page(self, current, previous):
         if current:

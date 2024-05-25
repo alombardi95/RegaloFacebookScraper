@@ -23,10 +23,12 @@ class DettagliGruppoItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_gruppo = db.Column(db.String(200), db.ForeignKey('gruppi.link'))
-    data_aggiornamento = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     numero_membri = db.Column(db.Integer)
     numero_admin = db.Column(db.Integer)
     nuovi_posts = db.Column(db.Integer)
+    data_creazione = db.Column(db.DateTime)
+    ultima_modifica = db.Column(db.DateTime)
 
     def __repr__(self):
         return f"<DettagliGruppoItem(id={self.id}, id_gruppo={self.id_gruppo})>"

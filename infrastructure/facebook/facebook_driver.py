@@ -16,3 +16,6 @@ class FacebookDriver(ProxyDriver):
     def goto_group_about(self, group_link):
         ensure_group_about = ensure_about_suffix(group_link)
         self.goto(ensure_group_about)
+
+    def close(self):
+        self.driver.close()
