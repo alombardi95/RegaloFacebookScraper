@@ -49,10 +49,24 @@ def initialize_scraper(scraper: FacebookDriver):
 def scrape_groups(links: list[str]):
     fs = FacebookDriver()
     initialize_scraper(fs)
-    data = []
+
+    def shift_list_next(lst, element):
+        if element not in lst:
+            raise ValueError("Element not found in the list")
+
+        index = lst.index(element)
+        next_index = (index + 1) % len(lst)
+        return lst[next_index:] + lst[:next_index]
 
     with app.app_context():
-        for link in links:
+        ultimo_dettaglio: DettagliGruppoItem = \
+            DettagliGruppoItem.query\
+            .order_by(DettagliGruppoItem.timestamp.desc())\
+            .first()
+
+        links_ordinati = shift_list_next(links, ultimo_dettaglio.id_gruppo)
+
+        for link in links_ordinati:
             gruppo_query = GruppoItem.query.filter_by(link=link)
             gruppo: GruppoItem = gruppo_query.first()
 
@@ -71,12 +85,9 @@ def scrape_groups(links: list[str]):
             db.session.add(record)
             db.session.commit()
 
-            data.append(result)
-            time.sleep(5)
+            time.sleep(1)
 
     fs.close()
-
-    return data
 
 
 if __name__ == '__main__':

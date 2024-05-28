@@ -28,6 +28,14 @@ class TableModel(QSortFilterProxyModel):
         return True
 
 
+class ReadOnlyModel(QStandardItemModel):
+    def flags(self, index):
+        # Ottieni i flag predefiniti
+        default_flags = super().flags(index)
+        # Rimuovi il flag Qt.ItemIsEditable per rendere la cella di sola lettura
+        return default_flags & ~Qt.ItemIsEditable
+
+
 class AddModifyGruppoDialog(QDialog):
     def __init__(self, record_to_modify: Optional[GruppoItem] = None):
         super().__init__()
@@ -85,7 +93,7 @@ class AddModifyGruppoDialog(QDialog):
         self.location_selector.combo_nazione.setCurrentText(self.record_to_modify.paese)
         self.location_selector.combo_regione.setCurrentText(self.record_to_modify.regione)
         self.location_selector.combo_provincia.setCurrentText(self.record_to_modify.provincia)
-        self.location_selector.combo_nazione.setCurrentText(self.record_to_modify.citta)
+        self.location_selector.entry_citta.setText(self.record_to_modify.citta)
 
 
 class GruppiManager(QWidget):
@@ -107,7 +115,7 @@ class GruppiManager(QWidget):
         layout.addWidget(self.table)
 
         table_headers = ["Link", "Nome", "Paese", "Regione", "Provincia", "Citta"]
-        self.group_table_model = QStandardItemModel(0, len(table_headers))
+        self.group_table_model = ReadOnlyModel(0, len(table_headers))
         self.group_table_model.setHorizontalHeaderLabels(table_headers)
 
         self.populate_table()  # Funzione per popolare la tabella

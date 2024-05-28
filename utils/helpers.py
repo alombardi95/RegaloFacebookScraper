@@ -1,5 +1,10 @@
+import csv
+import os
 import re
 from datetime import datetime
+
+from app import app, db
+from models.db_items import GruppoItem
 
 
 def extract_number(text):
@@ -53,3 +58,37 @@ def ensure_about_suffix(url):
         return url + 'about'
     else:
         return url + '/about'
+
+
+def import_csv_to_db(filename: str, clear: bool=False):
+    if not os.path.exists(filename):
+        return False
+
+    exports = 0
+
+    with open(filename, mode='r', newline='', encoding='ISO-8859-1') as file:
+        reader = csv.DictReader(file, delimiter=';')
+        data = [GruppoItem(
+            link=row['Url gruppo'],
+            regione=row['Regione'],
+            provincia=row['Città di riferimento']
+        ) for row in reader]
+
+    if not clear:
+        with app.app_context():
+            for gruppo in data:
+                if not GruppoItem.query.get(gruppo.link):
+                    db.session.add(gruppo)
+                    exports += 1
+            db.session.commit()
+
+    return exports
+
+
+def main():
+    data = import_csv_to_db("../temporale definitivo analisi.csv")
+    print(data)
+
+
+if __name__ == '__main__':
+    main()
