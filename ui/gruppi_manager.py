@@ -72,7 +72,7 @@ class AddModifyGruppoDialog(QDialog):
             "paese": self.location_selector.combo_nazione.currentText(),
             "regione": self.location_selector.combo_regione.currentText(),
             "provincia": self.location_selector.combo_provincia.currentText(),
-            "citta": self.location_selector.entry_citta.currentText(),
+            "citta": self.location_selector.entry_citta.text(),
         }
         if not self.is_modify_dialog:
             result["link"] = self.group_link_input.text()

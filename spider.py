@@ -9,6 +9,7 @@ from utils.helpers import extract_dates, extract_number
 
 def scrape_data(scraper: FacebookDriver, link: str):
     scraper.goto_group_about(link)
+    time.sleep(3)
     scraper.wait_then_click('//div[@aria-label="Close"]')
 
     members_number = extract_number(scraper.wait_for("//span[contains(., 'total members')]").text)
@@ -42,7 +43,7 @@ def initialize_scraper(scraper: FacebookDriver):
         try:
             scraper.wait_then_click("//button[@data-testid='cookie-policy-manage-dialog-accept-button']")
         except:
-            exit()
+            pass
 
 
 def scrape_groups(links: list[str]):
@@ -55,7 +56,11 @@ def scrape_groups(links: list[str]):
             gruppo_query = GruppoItem.query.filter_by(link=link)
             gruppo: GruppoItem = gruppo_query.first()
 
-            result = scrape_data(fs, link)
+            try:
+                result = scrape_data(fs, link)
+            except:
+                continue
+
             result['id_gruppo'] = link
 
             if gruppo and not gruppo.data_creazione:
