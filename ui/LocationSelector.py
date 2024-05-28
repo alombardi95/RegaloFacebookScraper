@@ -1,5 +1,5 @@
 import json
-from PyQt5.QtWidgets import (QWidget, QComboBox, QLabel, QDialog, QApplication, QPushButton, QVBoxLayout)
+from PyQt5.QtWidgets import (QWidget, QComboBox, QLabel, QDialog, QApplication, QPushButton, QVBoxLayout, QLineEdit)
 
 
 class LocationSelector(QWidget):
@@ -18,7 +18,7 @@ class LocationSelector(QWidget):
         self.combo_nazione = QComboBox()
         self.combo_regione = QComboBox()
         self.combo_provincia = QComboBox()
-        self.combo_citta = QComboBox()
+        self.entry_citta = QLineEdit()
 
         layout.addWidget(QLabel("Nazione:"))
         layout.addWidget(self.combo_nazione)
@@ -27,37 +27,28 @@ class LocationSelector(QWidget):
         layout.addWidget(QLabel("Provincia:"))
         layout.addWidget(self.combo_provincia)
         layout.addWidget(QLabel("Città:"))
-        layout.addWidget(self.combo_citta)
+        layout.addWidget(self.entry_citta)
 
         self.combo_nazione.currentIndexChanged.connect(self.update_regioni)
         self.combo_regione.currentIndexChanged.connect(self.update_province)
-        self.combo_provincia.currentIndexChanged.connect(self.update_citta)
 
         self.populate_nazioni()
 
     def populate_nazioni(self):
         self.combo_nazione.addItems(self.data.keys())
 
-    def update_regioni(self, index):
+    def update_regioni(self):
         self.combo_regione.clear()
         nazione = self.combo_nazione.currentText()
         if nazione:
             self.combo_regione.addItems(self.data[nazione].keys())
 
-    def update_province(self, index):
+    def update_province(self):
         self.combo_provincia.clear()
         nazione = self.combo_nazione.currentText()
         regione = self.combo_regione.currentText()
         if nazione and regione:
             self.combo_provincia.addItems(self.data[nazione][regione])
-
-    def update_citta(self, index):
-        self.combo_citta.clear()
-        nazione = self.combo_nazione.currentText()
-        regione = self.combo_regione.currentText()
-        provincia = self.combo_provincia.currentText()
-        if nazione and regione and provincia:
-            self.combo_citta.addItems(self.data[nazione][regione][provincia])
 
 
 class MainDialog(QDialog):
@@ -82,7 +73,7 @@ class MainDialog(QDialog):
         print("Nazione:", self.location_selector.combo_nazione.currentText())
         print("Regione:", self.location_selector.combo_regione.currentText())
         print("Provincia:", self.location_selector.combo_provincia.currentText())
-        print("Città:", self.location_selector.combo_citta.currentText())
+        print("Città:", self.location_selector.entry_citta.currentText())
 
 
 def main():
