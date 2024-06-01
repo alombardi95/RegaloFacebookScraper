@@ -1,0 +1,4 @@
+{
+  "WORKERS": 5,
+  "DATABASE_CONNECTION_STRING": "mysql+pymysql://root:DropBox95@localhost/gruppi"
+}
