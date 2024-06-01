@@ -1,10 +1,7 @@
-import csv
-import os
+import json
 import re
+from collections import namedtuple
 from datetime import datetime
-
-from app import app, db
-from models.db_items import GruppoItem
 
 
 def extract_number(text):
@@ -60,35 +57,19 @@ def ensure_about_suffix(url):
         return url + '/about'
 
 
-def import_csv_to_db(filename: str, clear: bool=False):
-    if not os.path.exists(filename):
-        return False
-
-    exports = 0
-
-    with open(filename, mode='r', newline='', encoding='ISO-8859-1') as file:
-        reader = csv.DictReader(file, delimiter=';')
-        data = [GruppoItem(
-            link=row['Url gruppo'],
-            regione=row['Regione'],
-            provincia=row['Città di riferimento']
-        ) for row in reader]
-
-    if not clear:
-        with app.app_context():
-            for gruppo in data:
-                if not GruppoItem.query.get(gruppo.link):
-                    db.session.add(gruppo)
-                    exports += 1
-            db.session.commit()
-
-    return exports
+def json_to_namedtuple(data):
+    if isinstance(data, dict):
+        # Crea una namedtuple con il nome 'JsonObject' e i campi basati sulle chiavi del dizionario
+        return namedtuple('JsonObject', data.keys())(*[json_to_namedtuple(v) for v in data.values()])
+    elif isinstance(data, list):
+        # Se è una lista, applica ricorsivamente la conversione a ciascun elemento
+        return [json_to_namedtuple(item) for item in data]
+    else:
+        # Altrimenti, restituisci il valore direttamente
+        return data
 
 
-def main():
-    data = import_csv_to_db("../temporale definitivo analisi.csv")
-    print(data)
-
-
-if __name__ == '__main__':
-    main()
+def load_json_as_namedtuple(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+        return json_to_namedtuple(data)

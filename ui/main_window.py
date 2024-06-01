@@ -1,9 +1,10 @@
+import csv
+import os
 import sys
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QWidget, QListWidget, QStackedWidget, QHBoxLayout,
                              QSizePolicy, QFileDialog, QMessageBox)
 
-import utils.helpers
 from app import db, app
 from gruppi_manager import GruppiManager
 from models.db_items import GruppoItem
@@ -82,19 +83,43 @@ class MainWindow(QMainWindow):
         scrape_groups(links)
         QMessageBox.information(self, "Run Terminata", "Il processo di scraping è finito")
 
+    @staticmethod
+    def import_csv_to_db(filename: str, clear: bool = False):
+        if not os.path.exists(filename):
+            return False
+
+        exports = 0
+
+        with open(filename, mode='r', newline='', encoding='ISO-8859-1') as file:
+            reader = csv.DictReader(file, delimiter=';')
+            data = [GruppoItem(
+                link=row['Url gruppo'],
+                regione=row['Regione'],
+                citta=row['Città di riferimento']
+            ) for row in reader]
+
+        if not clear:
+            with app.app_context():
+                for gruppo in data:
+                    if not GruppoItem.query.get(gruppo.link):
+                        db.session.add(gruppo)
+                        exports += 1
+                    else:
+                        pass
+
+                db.session.commit()
+
+        return exports
+
     def importa_gruppi(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         file_filter = "CSV Files (*.csv);;All Files (*)"
         file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", file_filter, options=options)
         if file_name:
-            result = utils.helpers.import_csv_to_db(file_name)
+            result = self.import_csv_to_db(file_name)
             QMessageBox.information(self, "Importazione fatta", f"Importati {result} nuovi records.")
             self.gruppi_manager_widget.populate_table()
-
-    def display_page(self, current, previous):
-        if current:
-            self.stack.setCurrentIndex(self.sidebar.row(current))
 
 
 def main():
