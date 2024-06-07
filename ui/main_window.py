@@ -1,14 +1,13 @@
 import csv
 import os
-import sys
 
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QWidget, QListWidget, QStackedWidget, QHBoxLayout,
+from PyQt5.QtWidgets import (QMainWindow, QAction, QWidget, QListWidget, QStackedWidget, QHBoxLayout,
                              QSizePolicy, QFileDialog, QMessageBox)
 
-from app import db, app
-from gruppi_manager import GruppiManager
+from app import db, app, config
 from models.db_items import GruppoItem
 from spider import scrape_groups
+from ui.gruppi_manager import GruppiManager
 
 
 class MainWindow(QMainWindow):
@@ -28,9 +27,7 @@ class MainWindow(QMainWindow):
 
         # Barra laterale
         self.sidebar = QListWidget()
-        #self.sidebar.addItems(["Progetti", "Gruppi"])
         self.sidebar.addItems(["Gruppi"])
-        self.sidebar.currentItemChanged.connect(self.display_page)
         self.mainLayout.addWidget(self.sidebar)
 
         # Area di visualizzazione principale
@@ -84,30 +81,36 @@ class MainWindow(QMainWindow):
         QMessageBox.information(self, "Run Terminata", "Il processo di scraping è finito")
 
     @staticmethod
-    def import_csv_to_db(filename: str, clear: bool = False):
+    def import_csv_to_db(filename: str):
+        '''
+        Funzione che mappa e importa i gruppi da un file CSV
+
+        :param filename: percorso del file da importare
+        '''
         if not os.path.exists(filename):
             return False
 
         exports = 0
 
+        headers = config.CSV_HEADERS
         with open(filename, mode='r', newline='', encoding='ISO-8859-1') as file:
             reader = csv.DictReader(file, delimiter=';')
             data = [GruppoItem(
-                link=row['Url gruppo'],
-                regione=row['Regione'],
-                citta=row['Città di riferimento']
+                link=row[headers.Link],
+                nome=row[headers.Nome],
+                regione=row[headers.Regione],
+                citta=row[headers.Citta]
             ) for row in reader]
 
-        if not clear:
-            with app.app_context():
-                for gruppo in data:
-                    if not GruppoItem.query.get(gruppo.link):
-                        db.session.add(gruppo)
-                        exports += 1
-                    else:
-                        pass
+        with app.app_context():
+            for gruppo in data:
+                if not GruppoItem.query.get(gruppo.link):
+                    db.session.add(gruppo)
+                    exports += 1
+                else:
+                    pass
 
-                db.session.commit()
+            db.session.commit()
 
         return exports
 
@@ -120,16 +123,3 @@ class MainWindow(QMainWindow):
             result = self.import_csv_to_db(file_name)
             QMessageBox.information(self, "Importazione fatta", f"Importati {result} nuovi records.")
             self.gruppi_manager_widget.populate_table()
-
-
-def main():
-    with app.app_context():
-        db.create_all()
-    app_ = QApplication(sys.argv)
-    win = MainWindow()
-    win.show()
-    sys.exit(app_.exec_())
-
-
-if __name__ == '__main__':
-    main()

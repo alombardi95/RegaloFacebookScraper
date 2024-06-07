@@ -1,4 +1,10 @@
 {
-  "WORKERS": 5,
-  "DATABASE_CONNECTION_STRING": "mysql+pymysql://root:DropBox95@localhost/gruppi"
+  "WORKERS": 2,
+  "DATABASE_CONNECTION_STRING": "mysql+pymysql://root:DropBox95@localhost/gruppi",
+  "CSV_HEADERS": {
+    "Link": "Url gruppo",
+    "Nome": "Nome",
+    "Regione": "Regione",
+    "Citta": "Città di riferimento"
+  }
 }

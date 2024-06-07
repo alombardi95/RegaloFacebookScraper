@@ -1,10 +1,15 @@
 import os
 import pickle
+import random
+import tempfile
 import time
 from sys import platform
 from typing import Optional
+import shutil
 
+from selenium import webdriver
 from selenium.webdriver import ActionChains, Keys
+from webdriver_manager.chrome import ChromeDriverManager
 
 from infrastructure.common.exceptions import ElementNotFoundError, PageNotLoadedError
 
@@ -66,6 +71,10 @@ class ProxyDriver:
             pass
         # Chrome
         else:
+            chromedriver_path = ChromeDriverManager().install()
+            self.temp_chrome_path = tempfile.mkdtemp()
+            shutil.copy(chromedriver_path, self.temp_chrome_path)
+
             # Chrome Options
             options = uc.ChromeOptions()
             if headless:
@@ -78,11 +87,16 @@ class ProxyDriver:
             # options.add_experimental_option('excludeSwitches', ['enable-logging'])
             options.add_argument("--log-level=3")
 
+            options.add_argument(r"--user-data-dir=" + tempfile.mkdtemp())
+            options.add_argument(r'--profile-directory=' + str(random.randint(1, 999999999)))
+            options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0")
+
             if platform == 'linux' or platform == 'linux2':
                 options.add_argument('--disable-dev-shm-usage')
 
             # current working directory/driver/chrome
-            self.driver = uc.Chrome(options=options)
+            self.driver = uc.Chrome(options=options, driver_executable_path=os.path.join(self.temp_chrome_path, "chromedriver"))
+            # self.driver = webdriver.Chrome(options=options)
 
     @property
     def actions(self) -> ActionChains:

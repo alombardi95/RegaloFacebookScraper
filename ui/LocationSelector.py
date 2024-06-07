@@ -9,7 +9,7 @@ class LocationSelector(QWidget):
         self.setup_ui()
 
     def load_data(self):
-        with open("locations.json", "r") as file:
+        with open("ui/locations.json", "r") as file:
             return json.load(file)
 
     def setup_ui(self):

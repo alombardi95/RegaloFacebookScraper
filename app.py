@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 
 from utils.helpers import load_json_as_namedtuple
 
-config = load_json_as_namedtuple("../app_config.json")
+config = load_json_as_namedtuple("./app_config.json")
 
 
 app = Flask(__name__)

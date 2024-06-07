@@ -19,3 +19,5 @@ class FacebookDriver(ProxyDriver):
 
     def close(self):
         self.driver.close()
+        #shutil.rmtree(self.temp_chrome_path)
+        #call('taskkill /F /IM chrome.exe /T')

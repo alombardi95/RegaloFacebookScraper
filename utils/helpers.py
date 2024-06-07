@@ -70,6 +70,6 @@ def json_to_namedtuple(data):
 
 
 def load_json_as_namedtuple(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='ISO-8859-1') as file:
         data = json.load(file)
         return json_to_namedtuple(data)
