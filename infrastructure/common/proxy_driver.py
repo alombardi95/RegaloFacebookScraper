@@ -28,6 +28,9 @@ from selenium.common.exceptions import ElementClickInterceptedException
 from retry import retry
 
 
+chromedriver_path = ChromeDriverManager().install()
+
+
 class ProxyDriver:
     FOLDER_NAME = 'cookies'
 
@@ -71,7 +74,6 @@ class ProxyDriver:
             pass
         # Chrome
         else:
-            chromedriver_path = ChromeDriverManager().install()
             self.temp_chrome_path = tempfile.mkdtemp()
             shutil.copy(chromedriver_path, self.temp_chrome_path)
 
