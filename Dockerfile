@@ -15,7 +15,7 @@ RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
 ENV DB_HOST=host.docker.internal
 ENV DB_NAME=gruppi
 ENV DB_USER=root
-ENV DB_PASSWORD=DropBox95
+ENV DB_PASSWORD=password
 
 # Installa le dipendenze necessarie
 RUN apt-get update && apt-get install -y \
