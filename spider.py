@@ -1,7 +1,7 @@
-import concurrent.futures
 import threading
 from datetime import datetime
 import time
+from zoneinfo import ZoneInfo
 
 from app import app, db, config
 from infrastructure.facebook.facebook_driver import FacebookDriver
@@ -21,8 +21,6 @@ def scrape_data(link: str):
     try:
         scraper.goto_group_about(link)
         scraper.wait_for("//span[contains(., 'Group')]")
-        #time.sleep(2)
-        #scraper.wait_then_click('//div[@aria-label="Close"]')
 
         new_posts_today_element = scraper.wait_for("//span[contains(., 'new posts today')]")
         if not new_posts_today_element:
@@ -44,6 +42,7 @@ def scrape_data(link: str):
 
     return {
         "id_gruppo": link,
+        "timestamp": datetime.now(tz=ZoneInfo("Europe/Rome")),
         "numero_membri": members_number,
         "numero_admin": len(admins),
         "posts_mensili": posts_last_month,

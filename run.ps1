@@ -1,0 +1,1 @@
+docker run -it --rm -e WORKERS=2 -e DISPLAY=host.docker.internal:0.0 -v C:/files:/app/files regalo-scraper

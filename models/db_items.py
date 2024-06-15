@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from app import db
 
 
@@ -24,7 +22,7 @@ class DettagliGruppoItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_gruppo = db.Column(db.String(200), db.ForeignKey('gruppi.link'))
-    timestamp = db.Column(db.DateTime, default=datetime.now())
+    timestamp = db.Column(db.DateTime)
     numero_membri = db.Column(db.Integer)
     numero_admin = db.Column(db.Integer)
     posts_mensili = db.Column(db.Integer)

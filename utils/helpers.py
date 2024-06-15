@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from collections import namedtuple
 from datetime import datetime
@@ -73,3 +74,24 @@ def load_json_as_namedtuple(file_path):
     with open(file_path, 'r', encoding='ISO-8859-1') as file:
         data = json.load(file)
         return json_to_namedtuple(data)
+
+
+def load_env_config():
+    # Connettiti al database
+    db_host = os.getenv('DB_HOST')
+    db_name = os.getenv('DB_NAME')
+    db_user = os.getenv('DB_USER')
+    db_password = os.getenv('DB_PASSWORD')
+
+    workers = int(os.getenv('WORKERS'))
+
+    return json_to_namedtuple({
+        "WORKERS": workers if workers else 1,
+        "DATABASE_CONNECTION_STRING": f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}",
+        "CSV_HEADERS": {
+            "Link": "Url gruppo",
+            "Nome": "Nome",
+            "Regione": "Regione",
+            "Citta": "Città di riferimento"
+        }
+    })

@@ -2,12 +2,11 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-from utils.helpers import load_json_as_namedtuple
+from utils.helpers import load_env_config
 
-config = load_json_as_namedtuple("./app_config.json")
-
-
+config = load_env_config()
 app = Flask(__name__)
+
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gruppi.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_CONNECTION_STRING
 
